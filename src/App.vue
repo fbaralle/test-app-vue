@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import CryptoDashboard from './components/CryptoDashboard.vue'
+import FavoritesSection from './components/FavoritesSection.vue'
 import HealthcheckToolbar from './components/HealthcheckToolbar.vue'
+
+const favoritesRef = ref<InstanceType<typeof FavoritesSection> | null>(null)
+
+function handleFavoriteToggled() {
+  favoritesRef.value?.fetchFavorites()
+}
 </script>
 
 <template>
@@ -17,7 +25,8 @@ import HealthcheckToolbar from './components/HealthcheckToolbar.vue'
       </p>
     </header>
     <main class="flex-1 px-4 pb-12">
-      <CryptoDashboard />
+      <FavoritesSection ref="favoritesRef" />
+      <CryptoDashboard @favoriteToggled="handleFavoriteToggled" />
     </main>
     <footer class="border-t border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60 backdrop-blur">
       <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">

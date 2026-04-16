@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue';
 
 // User's custom Vite configuration
 export default defineConfig({
+  base: process.env.COSMIC_MOUNT_PATH || process.env.VITE_BASE_PATH || '',
   plugins: [vue()],
   build: {
     sourcemap: true,

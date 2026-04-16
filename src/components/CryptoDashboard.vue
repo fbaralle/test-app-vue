@@ -2,6 +2,10 @@
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
 
+const emit = defineEmits<{
+  (e: 'favoriteToggled'): void
+}>()
+
 interface Coin {
   id: string
   symbol: string
@@ -226,6 +230,62 @@ const sorted = computed(() => {
 const selectedData = computed(() => coins.value?.find((c) => c.id === selectedCoin.value))
 const lastUpdated = computed(() => (dataUpdatedAt.value ? new Date(dataUpdatedAt.value) : null))
 
+// Favorites
+const favoriteIds = ref<Set<string>>(new Set())
+const basePath = computed(() => import.meta.env.VITE_BASE_PATH || '')
+
+async function fetchFavoriteIds() {
+  try {
+    const res = await fetch(`${basePath.value}/api/favorites?user_id=public`)
+    if (res.ok) {
+      const data = await res.json()
+      favoriteIds.value = new Set((data.favorites || []).map((f: { coin_id: string }) => f.coin_id))
+    }
+  } catch {
+    // Silently fail - favorites are optional
+  }
+}
+
+async function toggleFavorite(coin: Coin, event: Event) {
+  event.stopPropagation()
+  const isFavorited = favoriteIds.value.has(coin.id)
+
+  try {
+    if (isFavorited) {
+      const res = await fetch(`${basePath.value}/api/favorites?user_id=public&coin_id=${coin.id}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        favoriteIds.value.delete(coin.id)
+        favoriteIds.value = new Set(favoriteIds.value)
+        emit('favoriteToggled')
+      }
+    } else {
+      const res = await fetch(`${basePath.value}/api/favorites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: 'public',
+          coin_id: coin.id,
+          coin_name: coin.name,
+          coin_symbol: coin.symbol,
+          coin_image: coin.image,
+        }),
+      })
+      if (res.ok) {
+        favoriteIds.value.add(coin.id)
+        favoriteIds.value = new Set(favoriteIds.value)
+        emit('favoriteToggled')
+      }
+    }
+  } catch {
+    // Silently fail
+  }
+}
+
+// Fetch favorites on mount
+fetchFavoriteIds()
+
 // Methods
 function handleSort(key: SortKey) {
   if (sortKey.value === key) {
@@ -398,6 +458,7 @@ function getPriceBarPosition(low: number, high: number, current: number): number
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-left">
+              <th class="px-2 py-3 font-medium w-10"></th>
               <th
                 class="px-4 py-3 font-medium cursor-pointer hover:text-gray-900 dark:hover:text-white whitespace-nowrap"
                 @click="handleSort('market_cap_rank')"
@@ -459,6 +520,22 @@ function getPriceBarPosition(low: number, high: number, current: number): number
                     : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
                 ]"
               >
+                <td class="px-2 py-3">
+                  <button
+                    @click="toggleFavorite(coin, $event)"
+                    :class="[
+                      'p-1 rounded transition-colors',
+                      favoriteIds.has(coin.id)
+                        ? 'text-yellow-500 hover:text-yellow-600'
+                        : 'text-gray-300 dark:text-gray-600 hover:text-yellow-500'
+                    ]"
+                    :title="favoriteIds.has(coin.id) ? 'Remove from favorites' : 'Add to favorites'"
+                  >
+                    <svg class="w-5 h-5" :fill="favoriteIds.has(coin.id) ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  </button>
+                </td>
                 <td class="px-4 py-3 text-gray-500 dark:text-gray-400 font-mono">
                   {{ coin.market_cap_rank }}
                 </td>
