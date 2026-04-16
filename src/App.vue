@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import CryptoDashboard from './components/CryptoDashboard.vue'
+import HealthcheckToolbar from './components/HealthcheckToolbar.vue'
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+  <div class="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 pb-12">
     <header class="pt-10 pb-6 text-center">
       <p class="text-xs font-medium uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">
         Webflow Cloud Test App
@@ -24,5 +25,6 @@ import CryptoDashboard from './components/CryptoDashboard.vue'
         <p>Vue + Vite + Vue Query + Tailwind CSS</p>
       </div>
     </footer>
+    <HealthcheckToolbar />
   </div>
 </template>

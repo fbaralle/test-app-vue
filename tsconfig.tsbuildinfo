@@ -1,1 +1,1 @@
-{"root":["./src/env.d.ts","./src/main.ts","./src/app.vue","./src/components/cryptodashboard.vue"],"version":"5.8.3"}
+{"root":["./src/env.d.ts","./src/main.ts","./src/app.vue","./src/components/cryptodashboard.vue","./src/components/healthchecktoolbar.vue","./worker/index.ts","./worker/routes/cache.ts","./worker/routes/export.ts","./worker/routes/favorites.ts","./worker/routes/healthcheck.ts"],"version":"5.8.3"}
