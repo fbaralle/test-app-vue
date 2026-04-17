@@ -6,6 +6,7 @@ import HealthcheckToolbar from './components/HealthcheckToolbar.vue'
 import PageViewsSection from './components/PageViewsSection.vue'
 import FeatureFlagsSection from './components/FeatureFlagsSection.vue'
 import ExportsSection from './components/ExportsSection.vue'
+import EnvDebugSection from './components/EnvDebugSection.vue'
 
 const favoritesRef = ref<InstanceType<typeof FavoritesSection> | null>(null)
 
@@ -35,10 +36,11 @@ function handleFavoriteToggled() {
       <CryptoDashboard @favoriteToggled="handleFavoriteToggled" />
 
       <!-- Page Views, Feature Flags, and Exports in compact mode below -->
-      <div class="w-full max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="w-full max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <PageViewsSection compact />
         <FeatureFlagsSection compact />
         <ExportsSection compact />
+        <EnvDebugSection compact />
       </div>
     </main>
     <footer class="border-t border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-900/60 backdrop-blur">
