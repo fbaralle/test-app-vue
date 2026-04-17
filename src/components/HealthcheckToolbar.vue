@@ -87,7 +87,7 @@ const basePath = import.meta.env.APP_PUBLIC_API_PATH || ""
 
 async function fetchHealth() {
   try {
-    const res = await fetch(`${basePath}/api/healthcheck`)
+    const res = await fetch(`${basePath}/api/binding-status`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     health.value = (await res.json()) as HealthcheckResponse
     error.value = null
