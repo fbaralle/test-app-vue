@@ -53,13 +53,13 @@ const error = ref<string | null>(null)
 const exporting = ref(false)
 const lastExportId = ref<string | null>(null)
 
-const basePath = computed(() => import.meta.env.VITE_BASE_PATH || '')
+const basePath = import.meta.env.VITE_API_MOUNT_PATH || ""
 
 async function fetchExports() {
   loading.value = true
   error.value = null
   try {
-    const res = await fetch(`${basePath.value}/api/export`)
+    const res = await fetch(`${basePath}/api/export`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = (await res.json()) as ExportsResponse
     if (data.error) throw new Error(data.error)
@@ -73,7 +73,7 @@ async function fetchExports() {
 
 async function fetchFavorites() {
   try {
-    const res = await fetch(`${basePath.value}/api/favorites?user_id=public`)
+    const res = await fetch(`${basePath}/api/favorites?user_id=public`)
     if (res.ok) {
       const data = (await res.json()) as FavoritesResponse
       favorites.value = data.favorites || []
@@ -87,7 +87,7 @@ async function handleExportFavorites() {
   exporting.value = true
   lastExportId.value = null
   try {
-    const res = await fetch(`${basePath.value}/api/export`, {
+    const res = await fetch(`${basePath}/api/export`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

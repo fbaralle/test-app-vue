@@ -31,13 +31,13 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const pendingToggle = ref<string | null>(null)
 
-const basePath = computed(() => import.meta.env.VITE_BASE_PATH || '')
+const basePath = import.meta.env.VITE_API_MOUNT_PATH || ""
 
 async function fetchFlags() {
   loading.value = true
   error.value = null
   try {
-    const res = await fetch(`${basePath.value}/api/flags`)
+    const res = await fetch(`${basePath}/api/flags`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = (await res.json()) as FlagsResponse
     if (data.error) throw new Error(data.error)
@@ -57,7 +57,7 @@ async function toggleFlag(flag: string, value: boolean) {
   flags.value = { ...flags.value, [flag]: value }
 
   try {
-    const res = await fetch(`${basePath.value}/api/flags`, {
+    const res = await fetch(`${basePath}/api/flags`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ flag, value }),

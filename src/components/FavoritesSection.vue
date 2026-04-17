@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 
 interface Favorite {
   id: number
@@ -19,13 +19,13 @@ const favorites = ref<Favorite[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-const basePath = computed(() => import.meta.env.VITE_BASE_PATH || '')
+const basePath = import.meta.env.VITE_API_MOUNT_PATH || ""
 
 async function fetchFavorites() {
   loading.value = true
   error.value = null
   try {
-    const res = await fetch(`${basePath.value}/api/favorites?user_id=public`)
+    const res = await fetch(`${basePath}/api/favorites?user_id=public`)
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}`)
     }
@@ -40,7 +40,7 @@ async function fetchFavorites() {
 
 async function removeFavorite(coinId: string) {
   try {
-    const res = await fetch(`${basePath.value}/api/favorites?user_id=public&coin_id=${coinId}`, {
+    const res = await fetch(`${basePath}/api/favorites?user_id=public&coin_id=${coinId}`, {
       method: 'DELETE',
     })
     if (!res.ok) {

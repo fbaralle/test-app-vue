@@ -83,9 +83,11 @@ const isExpanded = ref(true)
 const hoveredService = ref<ServiceName | null>(null)
 let interval: ReturnType<typeof setInterval> | null = null
 
+const basePath = import.meta.env.VITE_API_MOUNT_PATH || ""
+
 async function fetchHealth() {
   try {
-    const res = await fetch('/api/healthcheck')
+    const res = await fetch(`${basePath}/api/healthcheck`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     health.value = (await res.json()) as HealthcheckResponse
     error.value = null

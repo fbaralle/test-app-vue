@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 interface PageViewsData {
   totalViews: number
@@ -42,13 +42,13 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const hasTracked = ref(false)
 
-const basePath = computed(() => import.meta.env.VITE_BASE_PATH || '')
+const basePath = import.meta.env.VITE_API_MOUNT_PATH || ""
 
 async function fetchPageViews() {
   loading.value = true
   error.value = null
   try {
-    const res = await fetch(`${basePath.value}/api/pageviews`)
+    const res = await fetch(`${basePath}/api/pageviews`)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = (await res.json()) as PageViewsResponse
     if (json.error) throw new Error(json.error)
@@ -69,7 +69,7 @@ async function trackPageView() {
 
   try {
     const visitorId = getVisitorId()
-    const res = await fetch(`${basePath.value}/api/pageviews`, {
+    const res = await fetch(`${basePath}/api/pageviews`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ visitorId }),
