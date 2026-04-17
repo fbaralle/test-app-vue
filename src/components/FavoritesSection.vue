@@ -19,7 +19,7 @@ const favorites = ref<Favorite[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-const basePath = import.meta.env.APP_PUBLIC_API_PATH || ""
+const basePath = (import.meta.env.BASE_URL || "").replace(/\/$/, "")
 
 async function fetchFavorites() {
   loading.value = true
