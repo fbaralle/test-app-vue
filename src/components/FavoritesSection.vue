@@ -11,6 +11,10 @@ interface Favorite {
   created_at: number
 }
 
+interface FavoritesResponse {
+  favorites: Favorite[]
+}
+
 const favorites = ref<Favorite[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -25,7 +29,7 @@ async function fetchFavorites() {
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}`)
     }
-    const data = await res.json()
+    const data = (await res.json()) as FavoritesResponse
     favorites.value = data.favorites || []
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to fetch favorites'

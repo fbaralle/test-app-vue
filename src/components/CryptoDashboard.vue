@@ -238,8 +238,8 @@ async function fetchFavoriteIds() {
   try {
     const res = await fetch(`${basePath.value}/api/favorites?user_id=public`)
     if (res.ok) {
-      const data = await res.json()
-      favoriteIds.value = new Set((data.favorites || []).map((f: { coin_id: string }) => f.coin_id))
+      const data = (await res.json()) as { favorites: { coin_id: string }[] }
+      favoriteIds.value = new Set((data.favorites || []).map((f) => f.coin_id))
     }
   } catch {
     // Silently fail - favorites are optional

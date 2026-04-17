@@ -10,7 +10,16 @@ export async function handleExport(request: Request, env: Env): Promise<Response
     if (!exportId) {
       // List recent exports
       try {
-        const list = await env.WEBFLOW_CLOUD_MEDIA.list({ prefix: "exports/", limit: 10 });
+        const r2 = env.MEDIA;
+
+        if (!r2) {
+          return new Response(
+            JSON.stringify({ error: "R2 binding not available", exports: [] }),
+            { status: 503, headers: { "Content-Type": "application/json" } }
+          );
+        }
+
+        const list = await r2.list({ prefix: "exports/", limit: 10 });
         const exports = list.objects.map((obj) => ({
           key: obj.key,
           size: obj.size,
@@ -29,7 +38,16 @@ export async function handleExport(request: Request, env: Env): Promise<Response
 
     // Get specific export
     try {
-      const object = await env.WEBFLOW_CLOUD_MEDIA.get(`exports/${exportId}`);
+      const r2 = env.MEDIA;
+
+      if (!r2) {
+        return new Response(
+          JSON.stringify({ error: "R2 binding not available" }),
+          { status: 503, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      const object = await r2.get(`exports/${exportId}`);
       if (!object) {
         return new Response(JSON.stringify({ error: "Export not found" }), {
           status: 404,
@@ -59,6 +77,15 @@ export async function handleExport(request: Request, env: Env): Promise<Response
 
   if (method === "POST") {
     try {
+      const r2 = env.MEDIA;
+
+      if (!r2) {
+        return new Response(
+          JSON.stringify({ error: "R2 binding not available" }),
+          { status: 503, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
       const body = (await request.json()) as Record<string, unknown>;
       const exportId = `export-${Date.now()}`;
       const exportData = {
@@ -67,7 +94,7 @@ export async function handleExport(request: Request, env: Env): Promise<Response
         data: body,
       };
 
-      await env.WEBFLOW_CLOUD_MEDIA.put(
+      await r2.put(
         `exports/${exportId}`,
         JSON.stringify(exportData),
         {
