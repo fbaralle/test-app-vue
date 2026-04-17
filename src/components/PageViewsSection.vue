@@ -42,7 +42,7 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const hasTracked = ref(false)
 
-const basePath = import.meta.env.VITE_API_MOUNT_PATH || ""
+const basePath = import.meta.env.PUBLIC_API_MOUNT_PATH || ""
 
 async function fetchPageViews() {
   loading.value = true
