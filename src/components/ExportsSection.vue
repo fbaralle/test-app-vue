@@ -53,7 +53,7 @@ const error = ref<string | null>(null)
 const exporting = ref(false)
 const lastExportId = ref<string | null>(null)
 
-const basePath = import.meta.env.PUBLIC_API_MOUNT_PATH || ""
+const basePath = import.meta.env.APP_PUBLIC_API_PATH || ""
 
 async function fetchExports() {
   loading.value = true
